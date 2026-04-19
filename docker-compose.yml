@@ -1,0 +1,23 @@
+services:
+  enrichment:
+    build: .
+    container_name: es-enrichment
+    env_file: .env
+    environment:
+      ES_HOST: http://host.docker.internal:9200  # override .env — host.docker.internal resolves inside container
+    dns:
+      - 8.8.8.8     # bypass Docker's caching resolver — fresh DNS every run
+      - 1.1.1.1
+    volumes:
+      - ./domain_mappings.db:/app/domain_mappings.db
+    cap_add:
+      - NET_ADMIN   # required for tcpdump
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # reach host ES/Kibana from container
+    command: sleep infinity
+    restart: "no"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
