@@ -8,6 +8,7 @@ services:
     dns:
       - 8.8.8.8     # bypass Docker's caching resolver — fresh DNS every run
       - 1.1.1.1
+    shm_size: '200mb'                              # Chrome needs >64 MB shared memory
     volumes:
       - ./domain_mappings.db:/app/domain_mappings.db
     cap_add:
@@ -19,5 +20,9 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+      - /run                                     # Chrome writes runtime files here
+      - /root/.config:uid=0                      # Chrome user-data / profile dir
+      - /root/.cache:uid=0                       # Chrome cache dir
+      - /root/.local:uid=0                       # Additional Chrome state
     security_opt:
       - no-new-privileges:true

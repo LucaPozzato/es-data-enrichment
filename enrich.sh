@@ -13,7 +13,7 @@ Commands:
   threat-intel  Run threat-intel enrichment only
   redirect      Run redirect enrichment only
 
-  reset-db      Delete domain_mappings.db
+  reset-db      Clear domain_mappings.db (truncate, preserves inode for running container)
   reset-es      Clear all enrichment fields from Elasticsearch
   reset         Interactive: choose what to reset
 EOF
@@ -37,8 +37,15 @@ case "${1:-}" in
     ;;
 
   reset-db)
-    rm -f domain_mappings.db
-    echo "domain_mappings.db deleted."
+    $COMPOSE exec enrichment python -c "
+import sqlite3, sys
+conn = sqlite3.connect('/app/domain_mappings.db')
+conn.execute('PRAGMA journal_mode=MEMORY')
+conn.execute('DELETE FROM domain_mappings')
+conn.commit()
+conn.close()
+print('domain_mappings.db cleared.')
+"
     ;;
 
   reset-es)

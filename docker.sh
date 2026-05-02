@@ -6,7 +6,8 @@ usage() {
 Usage: ./docker.sh <command>
 
 Commands:
-  start   Build the image and prepare for first run
+  make    Build image and prepare for first run
+  start   Start the image
   stop    Stop and remove the enrichment container
   reset   Rebuild the Docker image from scratch (no cache)
 EOF
@@ -14,10 +15,16 @@ EOF
 
 case "${1:-}" in
 
-  start)
+  make)
     touch domain_mappings.db
     echo "Building enrichment image..."
     docker compose build enrichment
+    echo "Starting enrichment container..."
+    docker compose up -d enrichment
+    echo "Done. Container running as es-enrichment."
+    ;;
+
+  start)
     echo "Starting enrichment container..."
     docker compose up -d enrichment
     echo "Done. Container running as es-enrichment."

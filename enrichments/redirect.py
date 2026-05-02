@@ -162,7 +162,7 @@ def get_pre_alert_domains(
     src_ip: str,
     alert_time: datetime,
     exclude_domain: str,
-    window_sec: int = 1,
+    window_sec: int = 3,
 ) -> list[str]:
     """
     Unique domains queried by src_ip in [alert_time - window_sec, alert_time).
